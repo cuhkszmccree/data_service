@@ -1,0 +1,52 @@
+server:
+  port: 2000
+
+spring:
+  application:
+    name: mysql_data_service
+  redis:
+    sentinel:
+      master: mymaster
+      nodes: 192.168.0.99:26379, 192.168.0.99:36379
+    database: 1
+    #password:
+    timeout: 3000
+  datasource:
+    name: test
+    url: jdbc:mysql://192.168.0.99:3306/ScadaData?serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 20
+      auto-commit: false
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.0.99:8888/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 192.168.0.99
+    instance-id: ${eureka.instance.ip-address}:${server.port}
+
+
+logging:
+  file:
+    path: /log
+    name: Mysql_data.log
+  level:
+    com:
+      example:
+        DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+
