@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,7 +21,7 @@ public class PDataController {
     private RedissonClient redissonClient;
 
     @RequestMapping(value = "/pdata_all_search", method = RequestMethod.GET)    //永久数据查找
-    @HystrixCommand(fallbackMethod = "GetAllFallback")
+    //@HystrixCommand(fallbackMethod = "GetAllFallback")
     public String SearchPData(){
         try {
             List<PData> result = pDataService.getAllPData();
@@ -36,7 +35,7 @@ public class PDataController {
     }
 
     @RequestMapping(value = "/pdata_searchbyid", method = RequestMethod.POST)    //永久数据查找
-    @HystrixCommand(fallbackMethod = "GetByIdFallback")
+    //@HystrixCommand(fallbackMethod = "GetByIdFallback")
     public String SearchPDataById(@RequestBody int id){
         try {
             PData result = pDataService.getPDatabyID(id);
@@ -50,7 +49,7 @@ public class PDataController {
     }
 
     @RequestMapping(value = "/pdatainsert", method = RequestMethod.POST)     //永久数据插入
-    @HystrixCommand(fallbackMethod = "InsertFallback")
+    //@HystrixCommand(fallbackMethod = "InsertFallback")
     public String InsertPData(@RequestBody int data){
         RLock lock = redissonClient.getLock("insert");
         try {
@@ -68,7 +67,7 @@ public class PDataController {
     }
 
     @RequestMapping(value = "/pdataupdate", method = RequestMethod.POST)      //永久数据更新
-    @HystrixCommand(fallbackMethod = "UpdateFallback")
+    //@HystrixCommand(fallbackMethod = "UpdateFallback")
     public String UpdatePData(@RequestBody PData pData){
         RLock lock = redissonClient.getLock("update");
         try {
@@ -87,6 +86,24 @@ public class PDataController {
         }
     }
 
+    @RequestMapping(value = "pdatadelete", method = RequestMethod.DELETE)       //永久数据删除
+    //@HystrixCommand(fallbackMethod = "DeleteFallback")
+    public String DeletePData(@RequestBody int id){
+        RLock lock = redissonClient.getLock("delete");
+        try {
+            lock.lock();
+            pDataService.deletePData(id);
+            return "Delete Complete";
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return "Delete Failed";
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
     public String GetByIdFallback(@RequestBody int id){
         return "Search service timeout";
     }
@@ -95,5 +112,7 @@ public class PDataController {
 
     public String GetAllFallback(){ return "Search all service timeout"; }
 
-    public String InsertFallback(@RequestBody int id){ return "Insert service timeout"; }
+    public String InsertFallback(@RequestBody int data){ return "Insert service timeout"; }
+
+    public String DeleteFallback(@RequestBody int id){ return "Delete service timeout"; }
 }

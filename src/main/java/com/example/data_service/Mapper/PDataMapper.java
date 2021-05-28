@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
-
 @Mapper
 public interface PDataMapper {
     @Insert("insert into PData(permanent_Data) values (#{Permanent_Data})")
@@ -20,4 +19,14 @@ public interface PDataMapper {
 
     @Select("Select * from PData where id=#{id}")
     PData Select_PDatabyID(int id);
+
+    void BatchInsert(@Param("Write_List") List<PData> list);
+
+
+    void BatchUpdate(@Param("Update_List") List<PData> list);
+
+    @Delete("Delete from PData where id=#{id}")
+    PData DeleteData(int id);
+
+    void BatchDelete(@Param("Delete_List") List<Integer> list);
 }

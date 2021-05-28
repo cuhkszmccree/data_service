@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.data_service.Mapper.PDataMapper">
+    <insert id="BatchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into PData(permanent_data) values
+        <foreach collection="Write_List" item="PData" index="index" separator=",">
+        (#{PData.Permanent_Data})
+        </foreach>
+    </insert>
+
+    <update id="BatchUpdate" parameterType="java.util.List">
+        update PData set permanent_data =
+        <foreach collection="Update_List" item="PData" index="index" separator=" " open="case id" close="end">
+            when #{PData.id} then #{PData.Permanent_Data}
+        </foreach>
+        where id in 
+        <foreach collection="Update_List" item="PData" index="index" separator="," open="(" close=")">
+            #{PData.id}
+        </foreach>
+    </update>
+
+    <delete id="BatchDelete" parameterType="java.util.List">
+        delete from PData
+        where id in
+        <foreach collection="Delete_List" item="id" index="index" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

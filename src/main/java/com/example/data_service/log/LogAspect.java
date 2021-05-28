@@ -19,14 +19,14 @@ public class LogAspect {
     public void before(JoinPoint joinPoint){
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        log.info("Mysql operation Prepared");
-        System.out.println("Log Aspect " + method.getName());
+        log.info("Mysql " + method.getName() + " operation Prepared");
+        //System.out.println("Log Aspect " + method.getName());
     }
     @After("execution(* com.example.data_service.Service.Impl.PDataImpl.*(..))")
     public void after(JoinPoint joinPoint){
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        log.info("Mysql operation Success");
-        System.out.println("Log Aspect " + method.getName());
+        log.info("Mysql " + method.getName() + " operation Success");
+        //System.out.println("Log Aspect " + method.getName());
     }
 }
